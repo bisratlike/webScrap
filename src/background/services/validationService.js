@@ -78,11 +78,16 @@ export function validateSession(session) {
  */
 export function sanitizeInput(input) {
   if (typeof input === 'string') {
-    return input
+    // Decode common URL/HTML encodings before stripping to prevent bypass
+    let safe = input
+      .replace(/&#?[a-z0-9]+;/gi, '')       // strip HTML entities
+      .replace(/%[0-9a-f]{2}/gi, '')          // strip URL-encoded sequences
+      .replace(/\u0000/g, '')                 // strip null bytes
       .replace(/[<>]/g, '')
       .replace(/javascript:/gi, '')
-      .replace(/on\w+=/gi, '')
+      .replace(/on\w+\s*=/gi, '')
       .slice(0, 10000);
+    return safe;
   }
   if (Array.isArray(input)) return input.map(sanitizeInput);
   if (input && typeof input === 'object') {

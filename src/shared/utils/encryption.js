@@ -11,6 +11,8 @@
  * @returns {string} Encrypted base64 string
  */
 export function encryptData(data, key) {
+  // eslint-disable-next-line no-console
+  console.warn('[DataSnap] encryptData uses a weak XOR cipher. Replace with Web Crypto API (AES-GCM) before production use.');
   try {
     const jsonStr = JSON.stringify(data);
     const keyBytes = [...key].map(c => c.charCodeAt(0));

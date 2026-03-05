@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { CONFIG } from '../../../../shared/constants/config.js';
+import { CONFIG } from '../../../shared/constants/config.js';
 
 export default function Footer() {
   return (

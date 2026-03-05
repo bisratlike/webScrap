@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from '../common/Button.jsx';
 import Input from '../common/Input.jsx';
 import { isValidCssSelector } from '../../utils/validators.js';
-import { MESSAGES } from '../../../../shared/constants/messages.js';
+import { MESSAGES } from '../../../shared/constants/messages.js';
 
 /**
  * @param {{ selectors: Array, onSelectorsChange: Function }} props

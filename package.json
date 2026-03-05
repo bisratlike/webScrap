@@ -7,7 +7,9 @@
     "build": "webpack --config webpack.config.js",
     "test": "jest --passWithNoTests",
     "dev": "webpack --watch --config webpack.config.js",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "server": "node server/app.js",
+    "server:dev": "node --watch server/app.js"
   },
   "jest": {
     "testEnvironment": "node",
@@ -22,9 +24,19 @@
     ]
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.263.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "stripe": "^20.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

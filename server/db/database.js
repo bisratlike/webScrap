@@ -14,7 +14,8 @@ function getDb() {
 
 async function initDb() {
   const Database = require('better-sqlite3');
-  const dbPath = path.join(__dirname, '../data/datasnap.db');
+  // Allow override via env var so tests can use an isolated database
+  const dbPath = process.env.DB_PATH || path.join(__dirname, '../data/datasnap.db');
   db = new Database(dbPath);
 
   // Enable WAL mode for better concurrent read performance

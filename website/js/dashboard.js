@@ -79,12 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
      ============================================ */
   async function fetchOverview() {
     try {
-      const data = await api('/api/admin/overview');
+      const data = await api('/api/admin/dashboard');
 
       // Stat cards
       setStatCard('stat-users',    data.totalUsers    ?? '—');
-      setStatCard('stat-subs',     data.activeSubs    ?? '—');
-      setStatCard('stat-revenue',  formatCurrency((data.totalRevenueCents) ?? 0));
+      setStatCard('stat-subs',     data.activeSubscriptions ?? '—');
+      setStatCard('stat-revenue',  formatCurrency(data.totalRevenue ?? 0));
       setStatCard('stat-installs', data.totalInstalls ?? '—');
 
       // Recent signups table
@@ -95,17 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
           u.name || '—',
           u.email,
           roleBadge(u.role),
-          formatDate(u.createdAt),
+          formatDate(u.created_at || u.createdAt),
         ]),
         document.getElementById('recent-signups-body'),
+        true, // allow HTML for role badge
       );
 
       // Recent activity table
       renderTable(
         ['Time', 'User', 'Action', 'Details'],
         (data.recentActivity || []).map(a => [
-          formatDateTime(a.createdAt || a.timestamp),
-          a.userEmail || a.user || '—',
+          formatDateTime(a.created_at || a.createdAt || a.timestamp),
+          a.userEmail || String(a.user_id || '—'),
           a.action || a.type || '—',
           a.details || '—',
         ]),
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
           u.name || '—',
           u.email,
           roleBadge(u.role),
-          formatDate(u.createdAt),
+          formatDate(u.created_at || u.createdAt),
           `<button class="btn btn-sm btn-secondary change-role-btn"
              data-id="${u._id || u.id}"
              data-role="${u.role}">
@@ -196,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!confirm(`Change role to "${newRole}"?`)) return;
     try {
       await api(`/api/admin/users/${userId}/role`, {
-        method: 'PATCH',
+        method: 'POST',
         body: JSON.stringify({ role: newRole }),
       });
       showToast(`Role updated to ${newRole}`, 'success');
@@ -245,12 +246,12 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTable(
         ['User', 'Plan', 'Status', 'Amount', 'Current Period', 'Created'],
         subs.map(s => [
-          s.userEmail || s.user?.email || '—',
+          s.email || s.userEmail || '—',
           s.plan || s.planName || 'Pro',
           statusBadge(s.status),
-          formatCurrency(s.amount || s.amountCents),
-          s.currentPeriodEnd ? formatDate(s.currentPeriodEnd) : '—',
-          formatDate(s.createdAt),
+          formatCurrency(s.amount ?? s.amountCents ?? 0),
+          s.current_period_end || s.currentPeriodEnd ? formatDate(s.current_period_end || s.currentPeriodEnd) : '—',
+          formatDate(s.created_at || s.createdAt),
         ]),
         container,
         true,
@@ -297,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTable(
         ['Date', 'Browser', 'Version', 'Platform'],
         (data.installs || data.recent || []).map(i => [
-          formatDate(i.createdAt || i.date),
+          formatDate(i.installed_at || i.last_seen || i.createdAt),
           i.browser || '—',
           i.version  || '—',
           i.platform || '—',

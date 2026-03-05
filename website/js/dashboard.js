@@ -364,7 +364,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showTableError(tbody, msg) {
     if (!tbody) return;
-    tbody.innerHTML = `<tr><td colspan="10" class="table-empty">Error: ${msg}</td></tr>`;
+    tbody.innerHTML = '';
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 10;
+    td.className = 'table-empty';
+    td.textContent = 'Error: ' + msg;
+    tr.appendChild(td);
+    tbody.appendChild(tr);
   }
 
   function updatePagination(prefix, page, perPage, total) {
@@ -398,16 +405,29 @@ document.addEventListener('DOMContentLoaded', () => {
     data.forEach(item => {
       const value = Number(item.value || item.count || 0);
       const pct   = (value / max) * 100;
+      const label = String(item.label || item.date || item.day || '');
 
       const row = document.createElement('div');
       row.className = 'bar-row';
-      row.innerHTML = `
-        <span class="bar-label">${item.label || item.date || item.day || ''}</span>
-        <div class="bar-track">
-          <div class="bar-fill" style="width:${pct}%"></div>
-        </div>
-        <span class="bar-value">${value}</span>
-      `;
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'bar-label';
+      labelEl.textContent = label;
+
+      const track = document.createElement('div');
+      track.className = 'bar-track';
+      const fill = document.createElement('div');
+      fill.className = 'bar-fill';
+      fill.style.width = pct + '%';
+      track.appendChild(fill);
+
+      const valEl = document.createElement('span');
+      valEl.className = 'bar-value';
+      valEl.textContent = value;
+
+      row.appendChild(labelEl);
+      row.appendChild(track);
+      row.appendChild(valEl);
       container.appendChild(row);
     });
   }

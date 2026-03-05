@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — DataSnap Pro</title>
+  <meta name="description" content="Create your DataSnap Pro account and start your Pro subscription." />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a class="nav-logo" href="/">DataSnap Pro</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" role="list">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/login.html">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <main class="register-page" role="main">
+    <div class="register-layout">
+
+      <!-- FORM COLUMN -->
+      <div class="form-container">
+        <h1>Create Your Account</h1>
+        <p class="form-subtitle">Get started with DataSnap Pro — $3/month after checkout.</p>
+
+        <!-- Alert box for API errors -->
+        <div class="alert alert-error" id="form-alert" role="alert" aria-live="polite"></div>
+
+        <form id="register-form" novalidate aria-label="Registration form">
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Jane Smith"
+              autocomplete="name"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="jane@example.com"
+              autocomplete="email"
+              required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Minimum 8 characters"
+                autocomplete="new-password"
+                required
+                aria-required="true"
+                minlength="8"
+              />
+              <button type="button" class="toggle-pw" id="pw-toggle" aria-label="Toggle password visibility">👁</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-wrapper">
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                placeholder="Re-enter your password"
+                autocomplete="new-password"
+                required
+                aria-required="true"
+              />
+              <button type="button" class="toggle-pw" id="pwc-toggle" aria-label="Toggle confirm password visibility">👁</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+            Create Account &amp; Subscribe
+          </button>
+
+        </form>
+
+        <p class="form-footer">
+          Already have an account? <a href="/login.html">Sign in</a>
+        </p>
+      </div>
+
+      <!-- PLAN SUMMARY COLUMN -->
+      <aside class="plan-summary" aria-label="Plan summary">
+        <p style="font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-600);margin-bottom:0.5rem;">You're subscribing to</p>
+        <h3>Pro Plan</h3>
+        <div class="plan-summary-price">$3</div>
+        <p class="plan-summary-period">per month · billed monthly</p>
+        <ul role="list">
+          <li>Unlimited scraping sessions</li>
+          <li>AI-powered selector suggestions</li>
+          <li>CSV, JSON &amp; Excel export</li>
+          <li>Infinite scroll &amp; pagination</li>
+          <li>Pattern auto-detection</li>
+          <li>Priority email support</li>
+          <li>All future updates included</li>
+        </ul>
+        <hr class="divider" />
+        <p style="font-size:0.8125rem;color:var(--gray-600);line-height:1.6;">
+          You'll be redirected to Stripe's secure checkout to complete payment. Cancel anytime from your account.
+        </p>
+      </aside>
+
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>

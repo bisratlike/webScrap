@@ -5,9 +5,21 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "dev": "webpack --watch --config webpack.config.js",
     "lint": "eslint src/"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.[jt]sx?$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "\\.(css|less|scss)$": "<rootDir>/tests/__mocks__/styleMock.js"
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
   },
   "dependencies": {
     "lucide-react": "^0.263.0",

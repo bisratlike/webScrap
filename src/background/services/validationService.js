@@ -82,6 +82,7 @@ export function sanitizeInput(input) {
     let safe = input
       .replace(/&#?[a-z0-9]+;/gi, '')       // strip HTML entities
       .replace(/%[0-9a-f]{2}/gi, '')          // strip URL-encoded sequences
+      // eslint-disable-next-line no-control-regex
       .replace(/\u0000/g, '')                 // strip null bytes
       .replace(/[<>]/g, '')
       .replace(/javascript:/gi, '')

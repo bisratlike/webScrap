@@ -1,0 +1,37 @@
+{
+  "name": "datasnap-pro",
+  "version": "1.0.0",
+  "description": "Enterprise Web Scraper Chrome Extension",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test": "jest",
+    "dev": "webpack --watch --config webpack.config.js",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "lucide-react": "^0.263.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0",
+    "autoprefixer": "^10.0.0",
+    "babel-loader": "^9.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.0.0",
+    "eslint": "^8.0.0",
+    "html-webpack-plugin": "^5.0.0",
+    "jest": "^29.0.0",
+    "postcss": "^8.0.0",
+    "postcss-loader": "^7.0.0",
+    "style-loader": "^3.0.0",
+    "tailwindcss": "^3.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  }
+}

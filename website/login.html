@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — DataSnap Pro</title>
+  <meta name="description" content="Sign in to your DataSnap Pro account." />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a class="nav-logo" href="/">DataSnap Pro</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" role="list">
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/register.html" class="btn-nav">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <!-- LOGIN FORM -->
+  <main class="form-page" role="main">
+    <div class="form-container">
+      <h1>Welcome Back</h1>
+      <p class="form-subtitle">Sign in to your DataSnap Pro account.</p>
+
+      <!-- Alert box -->
+      <div class="alert alert-error" id="form-alert" role="alert" aria-live="polite"></div>
+
+      <form id="login-form" novalidate aria-label="Login form">
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="jane@example.com"
+            autocomplete="email"
+            required
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            Password
+            <a href="#" style="font-weight:400;font-size:0.8rem;color:var(--gray-600);float:right;text-decoration:underline;">Forgot password?</a>
+          </label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Your password"
+              autocomplete="current-password"
+              required
+              aria-required="true"
+            />
+            <button type="button" class="toggle-pw" id="pw-toggle" aria-label="Toggle password visibility">👁</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+          Sign In
+        </button>
+
+      </form>
+
+      <p class="form-footer">
+        Don't have an account? <a href="/register.html">Create one free</a>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

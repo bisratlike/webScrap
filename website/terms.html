@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — DataSnap Pro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a class="nav-logo" href="/">DataSnap Pro</a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links" role="list">
+      <li><a href="/">Home</a></li>
+      <li><a href="/login.html">Login</a></li>
+      <li><a href="/register.html" class="btn-nav">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <main style="max-width:720px;margin:4rem auto;padding:0 2rem;" role="main">
+    <h1 style="margin-bottom:1.5rem;">Terms of Service</h1>
+    <p style="color:var(--gray-600);margin-bottom:2rem;">Last updated: <span id="date"></span></p>
+
+    <h2 style="margin:2rem 0 0.75rem;">Acceptance of Terms</h2>
+    <p style="color:var(--gray-700);line-height:1.75;">By using DataSnap Pro you agree to these Terms of Service. If you do not agree, please do not use the service.</p>
+
+    <h2 style="margin:2rem 0 0.75rem;">Permitted Use</h2>
+    <p style="color:var(--gray-700);line-height:1.75;">DataSnap Pro is intended for lawful data collection only. You are responsible for ensuring your scraping activities comply with the terms of service of target websites and applicable laws including CFAA and GDPR.</p>
+
+    <h2 style="margin:2rem 0 0.75rem;">Subscription &amp; Billing</h2>
+    <p style="color:var(--gray-700);line-height:1.75;">Subscriptions are billed monthly via Stripe. You may cancel at any time and your access will continue until the end of the current billing period. No refunds are issued for partial months.</p>
+
+    <h2 style="margin:2rem 0 0.75rem;">Limitation of Liability</h2>
+    <p style="color:var(--gray-700);line-height:1.75;">DataSnap Pro is provided "as is" without warranty. We are not liable for any damages arising from your use of the service.</p>
+
+    <h2 style="margin:2rem 0 0.75rem;">Contact</h2>
+    <p style="color:var(--gray-700);line-height:1.75;">For questions about these terms, email <a href="mailto:legal@datasnapPro.com" style="text-decoration:underline;">legal@datasnapPro.com</a>.</p>
+
+    <div style="margin-top:3rem;">
+      <a href="/" class="btn btn-secondary">← Back to Home</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-copy">&copy; <span id="year"></span> DataSnap Pro. All rights reserved.</p>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  </script>
+</body>
+</html>

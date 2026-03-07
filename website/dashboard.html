@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — DataSnap Pro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* Dashboard-only overrides */
+    body { background: var(--gray-100); overflow-x: hidden; }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" role="navigation" aria-label="Dashboard navigation">
+      <div class="sidebar-logo">DataSnap Pro</div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="active" data-tab="overview">
+          <span class="sidebar-icon" aria-hidden="true">📊</span> Overview
+        </a>
+        <a href="#" data-tab="users">
+          <span class="sidebar-icon" aria-hidden="true">👥</span> Users
+        </a>
+        <a href="#" data-tab="subscriptions">
+          <span class="sidebar-icon" aria-hidden="true">💳</span> Subscriptions
+        </a>
+        <a href="#" data-tab="usage">
+          <span class="sidebar-icon" aria-hidden="true">⚡</span> Usage
+        </a>
+        <a href="#" data-tab="installs">
+          <span class="sidebar-icon" aria-hidden="true">📦</span> Installs
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" id="logout-btn" type="button">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-main" role="main">
+
+      <!-- HEADER BAR -->
+      <header class="dash-header">
+        <h1 id="dash-page-title">Overview</h1>
+        <span>Logged in as <strong id="admin-name"></strong></span>
+      </header>
+
+      <div class="dash-content">
+
+        <!-- ==================
+             OVERVIEW TAB
+             ================== -->
+        <section class="tab-panel active" id="tab-overview" aria-label="Overview">
+
+          <!-- Stat Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">👥</span>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-users">—</div>
+                <div class="stat-label">Total Users</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">💳</span>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-subs">—</div>
+                <div class="stat-label">Active Subscriptions</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">💰</span>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-revenue">—</div>
+                <div class="stat-label">Total Revenue</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">📦</span>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-installs">—</div>
+                <div class="stat-label">Total Installs</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Signups -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h2>Recent Signups</h2>
+              <span class="text-muted text-small">Last 10 users</span>
+            </div>
+            <div class="table-wrapper">
+              <table aria-label="Recent signups">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Joined</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-signups-body">
+                  <tr><td colspan="5" class="table-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="table-section">
+            <div class="table-section-header">
+              <h2>Recent Activity</h2>
+              <span class="text-muted text-small">Last 20 events</span>
+            </div>
+            <div class="table-wrapper">
+              <table aria-label="Recent activity">
+                <thead>
+                  <tr>
+                    <th scope="col">Time</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Details</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-activity-body">
+                  <tr><td colspan="4" class="table-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================
+             USERS TAB
+             ================== -->
+        <section class="tab-panel" id="tab-users" aria-label="Users">
+          <div class="table-section">
+            <div class="table-section-header">
+              <h2>All Users</h2>
+              <div class="search-bar">
+                <input
+                  type="search"
+                  id="user-search"
+                  class="search-input"
+                  placeholder="Search by name or email…"
+                  aria-label="Search users"
+                />
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table aria-label="Users table">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Joined</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table-body">
+                  <tr><td colspan="6" class="table-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <span class="pagination-info" id="users-page-info"></span>
+              <button id="users-prev" aria-label="Previous page">&larr; Prev</button>
+              <button id="users-next" aria-label="Next page">Next &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================
+             SUBSCRIPTIONS TAB
+             ================== -->
+        <section class="tab-panel" id="tab-subscriptions" aria-label="Subscriptions">
+          <div class="table-section">
+            <div class="table-section-header">
+              <h2>Subscriptions</h2>
+              <div class="search-bar">
+                <select id="subs-filter" class="filter-select" aria-label="Filter by status">
+                  <option value="">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="trialing">Trialing</option>
+                  <option value="canceled">Canceled</option>
+                  <option value="past_due">Past Due</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table aria-label="Subscriptions table">
+                <thead>
+                  <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Plan</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Current Period</th>
+                    <th scope="col">Created</th>
+                  </tr>
+                </thead>
+                <tbody id="subs-table-body">
+                  <tr><td colspan="6" class="table-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <span class="pagination-info" id="subs-page-info"></span>
+              <button id="subs-prev" aria-label="Previous page">&larr; Prev</button>
+              <button id="subs-next" aria-label="Next page">Next &rarr;</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================
+             USAGE TAB
+             ================== -->
+        <section class="tab-panel" id="tab-usage" aria-label="Usage">
+
+          <div class="usage-grid">
+            <div class="usage-card">
+              <div class="usage-card-title">Scraping Sessions</div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-scrapes-today">—</span>
+                <span class="usage-metric-label">today</span>
+              </div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-scrapes-month">—</span>
+                <span class="usage-metric-label">this month</span>
+              </div>
+            </div>
+            <div class="usage-card">
+              <div class="usage-card-title">Exports</div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-exports-today">—</span>
+                <span class="usage-metric-label">today</span>
+              </div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-exports-month">—</span>
+                <span class="usage-metric-label">this month</span>
+              </div>
+            </div>
+            <div class="usage-card">
+              <div class="usage-card-title">AI Queries</div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-ai-today">—</span>
+                <span class="usage-metric-label">today</span>
+              </div>
+              <div class="usage-metric">
+                <span class="usage-metric-value" id="usage-ai-month">—</span>
+                <span class="usage-metric-label">this month</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-section">
+            <div class="table-section-header"><h2>Scrapes by Day (last 14 days)</h2></div>
+            <div class="bar-chart" id="scrapes-chart" aria-label="Scrapes by day chart">
+              <p style="padding:1rem;color:var(--gray-400);">Loading…</p>
+            </div>
+          </div>
+
+          <div class="table-section">
+            <div class="table-section-header"><h2>Exports by Day (last 14 days)</h2></div>
+            <div class="bar-chart" id="exports-chart" aria-label="Exports by day chart">
+              <p style="padding:1rem;color:var(--gray-400);">Loading…</p>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==================
+             INSTALLS TAB
+             ================== -->
+        <section class="tab-panel" id="tab-installs" aria-label="Installs">
+
+          <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px,1fr));max-width:400px;margin-bottom:2rem;">
+            <div class="stat-card">
+              <span class="stat-icon" aria-hidden="true">📦</span>
+              <div class="stat-info">
+                <div class="stat-value" id="stat-total-installs">—</div>
+                <div class="stat-label">Total Installs</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-section">
+            <div class="table-section-header"><h2>Recent Installs</h2></div>
+            <div class="table-wrapper">
+              <table aria-label="Installs table">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Browser</th>
+                    <th scope="col">Version</th>
+                    <th scope="col">Platform</th>
+                  </tr>
+                </thead>
+                <tbody id="installs-table-body">
+                  <tr><td colspan="4" class="table-empty">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-section">
+            <div class="table-section-header"><h2>Daily Installs (last 14 days)</h2></div>
+            <div class="bar-chart" id="installs-chart" aria-label="Daily installs chart">
+              <p style="padding:1rem;color:var(--gray-400);">Loading…</p>
+            </div>
+          </div>
+
+        </section>
+
+      </div><!-- /.dash-content -->
+    </div><!-- /.dashboard-main -->
+  </div><!-- /.dashboard -->
+
+  <!-- Mobile sidebar toggle button -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

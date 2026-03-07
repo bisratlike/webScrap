@@ -11,11 +11,13 @@
     "test:all": "npm run test:api && npm run test:e2e",
     "dev": "webpack --watch --config webpack.config.js",
     "lint": "eslint src/",
-    "server": "node server/app.js",
-    "server:dev": "node --watch server/app.js"
+    "server": "node backend/server.js",
+    "server:dev": "node --watch backend/server.js",
+    "server:legacy": "node server/app.js"
   },
   "jest": {
     "testEnvironment": "node",
+    "testTimeout": 30000,
     "transform": {
       "^.+\\.[jt]sx?$": "babel-jest"
     },
@@ -37,6 +39,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.263.0",
+    "mongodb-memory-server": "^10.4.3",
+    "mongoose": "^8.23.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "stripe": "^20.4.0"

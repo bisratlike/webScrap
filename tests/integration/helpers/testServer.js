@@ -1,60 +1,63 @@
 'use strict';
 /**
- * testServer.js
- * Boots the Express app with an isolated in-memory SQLite database so every
- * test file starts with a clean slate without touching the production DB.
+ * testServer.js  (MongoDB Docker edition)
+ *
+ * Uses the MongoDB instance running in Docker (localhost:27017).
+ * Each test file gets a UNIQUE database name so they are fully isolated.
  */
 
-const os = require('os');
-const path = require('path');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
-let _testDbPath = null;
+// Build a unique database name per test worker process + timestamp
+let _dbName = null;
 
 /**
- * Returns a fresh supertest agent backed by an isolated test database.
- * Call once per test file (in beforeAll). Must call teardown() in afterAll.
+ * Connect to the Docker MongoDB, seed admin, return supertest agent.
+ * Call in beforeAll(); must call teardown() in afterAll().
  */
 async function createTestServer() {
-  // Use a unique temp file so parallel test workers don't collide
-  _testDbPath = path.join(os.tmpdir(), `datasnap_test_${process.pid}_${Date.now()}.db`);
+  _dbName = `datasnap_test_${process.pid}_${Date.now()}`;
+  const uri = `mongodb://127.0.0.1:27017/${_dbName}`;
 
-  // Point the server at the temp database and set test env vars
-  process.env.DB_PATH = _testDbPath;
-  process.env.JWT_SECRET = 'test-jwt-secret-at-least-32-chars!!';
-  process.env.NODE_ENV = 'test';
-  // Keep Stripe/Gemini keys as placeholders so optional integrations return 503
-  if (!process.env.STRIPE_SECRET_KEY) process.env.STRIPE_SECRET_KEY = 'sk_test_placeholder';
-  // Use the exact placeholder string the server's getGeminiClient() checks for
-  if (!process.env.GEMINI_API_KEY)    process.env.GEMINI_API_KEY    = 'your-gemini-api-key-here';
+  // ── Set env vars BEFORE loading any backend modules ─────────────────────
+  process.env.MONGODB_URI = uri;
+  process.env.JWT_SECRET  = 'test-jwt-secret-at-least-32-chars!!';
+  process.env.NODE_ENV    = 'test';
+  if (!process.env.STRIPE_SECRET_KEY)
+    process.env.STRIPE_SECRET_KEY = 'sk_test_placeholder';
+  // Exact placeholder string the service checks for
+  if (!process.env.GEMINI_API_KEY)
+    process.env.GEMINI_API_KEY = 'your-gemini-api-key-here';
 
-  // Each test file needs a fresh module graph to pick up the new DB_PATH
+  // ── Fresh module graph so env vars are picked up ─────────────────────────
   jest.resetModules();
 
-  const { initDb } = require('../../../server/db/database');
-  await initDb();
+  // ── Connect Mongoose ─────────────────────────────────────────────────────
+  const { connectDb } = require('../../../backend/config/db');
+  await connectDb(uri);
 
-  const app = require('../../../server/app');
+  // ── Seed admin user ───────────────────────────────────────────────────────
+  const seedAdmin = require('../../../backend/utils/seedAdmin');
+  await seedAdmin();
+
+  // ── Build Express app ─────────────────────────────────────────────────────
+  const createApp = require('../../../backend/app');
+  const app = createApp();
+
   const supertest = require('supertest');
   return supertest(app);
 }
 
 /**
- * Remove the temp database file after tests finish.
+ * Disconnect Mongoose and drop the test database.
  */
-function teardown() {
-  if (_testDbPath && fs.existsSync(_testDbPath)) {
-    try { fs.unlinkSync(_testDbPath); } catch (err) {
-      if (err.code !== 'ENOENT') console.warn('teardown: could not remove db file:', err.message);
+async function teardown() {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.db.dropDatabase();
+      await mongoose.disconnect();
     }
-  }
-  // Also remove the WAL files
-  ['-wal', '-shm'].forEach(ext => {
-    const f = _testDbPath + ext;
-    if (fs.existsSync(f)) try { fs.unlinkSync(f); } catch (err) {
-      if (err.code !== 'ENOENT') console.warn('teardown: could not remove', ext, 'file:', err.message);
-    }
-  });
+  } catch { /* ignore */ }
 }
 
 module.exports = { createTestServer, teardown };

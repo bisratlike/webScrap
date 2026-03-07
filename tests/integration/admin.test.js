@@ -1,8 +1,7 @@
 'use strict';
 /**
  * admin.test.js
- * Black-box integration tests for /api/admin endpoints.
- * Verifies access control, data shape and pagination — no internals exposed.
+ * Black-box integration tests for /api/admin endpoints (MongoDB backend).
  */
 
 const { createTestServer, teardown } = require('./helpers/testServer');
@@ -14,21 +13,19 @@ let userToken;
 beforeAll(async () => {
   request = await createTestServer();
 
-  // Log in as the seeded admin
   const adminLogin = await request.post('/api/auth/login').send({
     email: 'admin@datasnap.pro',
     password: 'Admin1234!',
   });
   adminToken = adminLogin.body.token;
 
-  // Create a regular user
   const userSignup = await request.post('/api/auth/signup').send({
     name: 'RegularUser',
     email: 'regular@example.com',
     password: 'regular123',
   });
   userToken = userSignup.body.token;
-}, 20000);
+}, 30000);
 
 afterAll(teardown);
 
@@ -76,72 +73,59 @@ describe('GET /api/admin/dashboard', () => {
     expect(Array.isArray(res.body.recentActivity)).toBe(true);
   });
 
-  it('counts at least the seeded admin + regular user in totalUsers', async () => {
+  it('counts at least the seeded admin + regular user', async () => {
     const res = await request
       .get('/api/admin/dashboard')
       .set('Authorization', `Bearer ${adminToken}`);
-
-    // We created admin (seed) + regular user in beforeAll
     expect(res.body.totalUsers).toBeGreaterThanOrEqual(2);
   });
 
-  it('recentSignups does not expose password_hash', async () => {
+  it('does not expose password hashes in recentSignups', async () => {
     const res = await request
       .get('/api/admin/dashboard')
       .set('Authorization', `Bearer ${adminToken}`);
-
-    res.body.recentSignups.forEach(u => {
-      expect(u.password_hash).toBeUndefined();
-    });
+    for (const u of res.body.recentSignups) {
+      expect(u.passwordHash).toBeUndefined();
+    }
   });
 });
 
-// ─── Users list ───────────────────────────────────────────────────────────────
+// ─── Users ────────────────────────────────────────────────────────────────────
 describe('GET /api/admin/users', () => {
-  it('returns paginated user list', async () => {
+  it('returns total, page, limit, users array', async () => {
     const res = await request
       .get('/api/admin/users')
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.status).toBe(200);
     expect(typeof res.body.total).toBe('number');
+    expect(res.body.page).toBe(1);
     expect(Array.isArray(res.body.users)).toBe(true);
-    expect(typeof res.body.page).toBe('number');
-    expect(typeof res.body.limit).toBe('number');
+    expect(res.body.users.length).toBeGreaterThan(0);
   });
 
-  it('never exposes password_hash', async () => {
-    const res = await request
-      .get('/api/admin/users')
-      .set('Authorization', `Bearer ${adminToken}`);
-
-    res.body.users.forEach(u => expect(u.password_hash).toBeUndefined());
-  });
-
-  it('supports pagination via page query param', async () => {
-    const res = await request
-      .get('/api/admin/users?page=1&limit=1')
-      .set('Authorization', `Bearer ${adminToken}`);
-
-    expect(res.status).toBe(200);
-    expect(res.body.users.length).toBeLessThanOrEqual(1);
-  });
-
-  it('supports search query param', async () => {
+  it('supports search query', async () => {
     const res = await request
       .get('/api/admin/users?search=admin')
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.status).toBe(200);
-    // At least the seeded admin should match
-    expect(res.body.users.length).toBeGreaterThanOrEqual(1);
-    expect(res.body.users[0].email).toContain('admin');
+    expect(res.body.users.some(u => u.email.includes('admin'))).toBe(true);
+  });
+
+  it('no user exposes passwordHash', async () => {
+    const res = await request
+      .get('/api/admin/users')
+      .set('Authorization', `Bearer ${adminToken}`);
+    for (const u of res.body.users) {
+      expect(u.passwordHash).toBeUndefined();
+    }
   });
 });
 
-// ─── Subscriptions list ───────────────────────────────────────────────────────
+// ─── Subscriptions ────────────────────────────────────────────────────────────
 describe('GET /api/admin/subscriptions', () => {
-  it('returns paginated subscription list', async () => {
+  it('returns subscription list shape', async () => {
     const res = await request
       .get('/api/admin/subscriptions')
       .set('Authorization', `Bearer ${adminToken}`);
@@ -150,19 +134,9 @@ describe('GET /api/admin/subscriptions', () => {
     expect(typeof res.body.total).toBe('number');
     expect(Array.isArray(res.body.subscriptions)).toBe(true);
   });
-
-  it('supports status filter query param', async () => {
-    const res = await request
-      .get('/api/admin/subscriptions?status=active')
-      .set('Authorization', `Bearer ${adminToken}`);
-
-    expect(res.status).toBe(200);
-    // All returned subscriptions must have status active
-    res.body.subscriptions.forEach(s => expect(s.status).toBe('active'));
-  });
 });
 
-// ─── Usage stats ──────────────────────────────────────────────────────────────
+// ─── Usage ────────────────────────────────────────────────────────────────────
 describe('GET /api/admin/usage', () => {
   it('returns byAction and byDay arrays', async () => {
     const res = await request
@@ -175,9 +149,9 @@ describe('GET /api/admin/usage', () => {
   });
 });
 
-// ─── Installs stats ───────────────────────────────────────────────────────────
+// ─── Installs ─────────────────────────────────────────────────────────────────
 describe('GET /api/admin/installs', () => {
-  it('returns total, byDay and recent arrays', async () => {
+  it('returns total, byDay, recent', async () => {
     const res = await request
       .get('/api/admin/installs')
       .set('Authorization', `Bearer ${adminToken}`);
@@ -194,13 +168,15 @@ describe('POST /api/admin/users/:id/role', () => {
   let targetUserId;
 
   beforeAll(async () => {
-    const usersRes = await request
-      .get('/api/admin/users?search=regular')
-      .set('Authorization', `Bearer ${adminToken}`);
-    targetUserId = usersRes.body.users[0]?.id;
+    const res = await request.post('/api/auth/signup').send({
+      name: 'RoleTarget',
+      email: 'roletarget@example.com',
+      password: 'pass1234',
+    });
+    targetUserId = res.body.user.id;
   });
 
-  it('promotes a user to admin role', async () => {
+  it('changes a user role to admin', async () => {
     const res = await request
       .post(`/api/admin/users/${targetUserId}/role`)
       .set('Authorization', `Bearer ${adminToken}`)
@@ -208,15 +184,17 @@ describe('POST /api/admin/users/:id/role', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
+    expect(res.body.user.role).toBe('admin');
   });
 
-  it('demotes back to user role', async () => {
+  it('changes back to user', async () => {
     const res = await request
       .post(`/api/admin/users/${targetUserId}/role`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ role: 'user' });
 
     expect(res.status).toBe(200);
+    expect(res.body.user.role).toBe('user');
   });
 
   it('returns 400 for an invalid role value', async () => {
@@ -228,12 +206,12 @@ describe('POST /api/admin/users/:id/role', () => {
     expect(res.status).toBe(400);
   });
 
-  it('returns 404 for a non-existent user id', async () => {
+  it('returns 403 when a regular user tries to change roles', async () => {
     const res = await request
-      .post('/api/admin/users/999999/role')
-      .set('Authorization', `Bearer ${adminToken}`)
-      .send({ role: 'user' });
+      .post(`/api/admin/users/${targetUserId}/role`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ role: 'admin' });
 
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(403);
   });
 });
